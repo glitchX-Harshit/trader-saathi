@@ -63,10 +63,10 @@ export default function JarvisCompanion({ state = 'idle', message = 'Standing by
 
   const getThemeColor = () => {
     switch (displayState) {
-      case 'warning': return { stroke: '#e11d48', glow: 'rgba(225, 29, 72, 0.08)', text: 'text-rose-600' };
-      case 'speaking': return { stroke: '#10b981', glow: 'rgba(16, 185, 129, 0.08)', text: 'text-emerald-600' };
-      case 'thinking': return { stroke: '#2563eb', glow: 'rgba(37, 99, 235, 0.12)', text: 'text-blue-600' };
-      default: return { stroke: '#0f172a', glow: 'rgba(15, 23, 42, 0.04)', text: 'text-slate-800' };
+      case 'warning': return { stroke: '#dc2626', text: 'text-red-600' };
+      case 'speaking': return { stroke: '#16a34a', text: 'text-emerald-600' };
+      case 'thinking': return { stroke: '#ff4f00', text: 'text-orange-600' };
+      default: return { stroke: '#1a1a1a', text: 'text-slate-800' };
     }
   };
 
@@ -82,135 +82,69 @@ export default function JarvisCompanion({ state = 'idle', message = 'Standing by
   return (
     <div className="flex flex-col lg:flex-row h-full w-full overflow-hidden bg-white text-slate-800">
       
-      {/* Left Column: Asymmetric 3D Neural Core HUD Visualizer */}
-      <div className="lg:w-1/2 p-10 flex flex-col justify-between items-center relative overflow-hidden bg-slate-50/40 border-b lg:border-b-0 lg:border-r border-slate-100">
+      {/* Left Column: Abstract Art Kinetic Circle Canvas */}
+      <div className="lg:w-1/2 p-10 flex flex-col justify-between items-center relative overflow-hidden bg-[#faf9f6] border-b lg:border-b-0 lg:border-r border-slate-200">
         
-        {/* HUD System Coordinates & Status indicators */}
-        <div className="w-full flex justify-between items-start z-10 font-mono text-[9px] text-slate-400">
+        {/* Top minimal header info */}
+        <div className="w-full flex justify-between items-start z-10 font-mono text-[9px] text-slate-500">
           <div>
-            <div>SYS.LOC // NC-COGNITIVE</div>
-            <div className="text-[8px] text-slate-300">LATENCY: 14MS // FREQ: 98.2HZ</div>
+            <div>CO-PILOT CONTEXT</div>
+            <div className="text-slate-400">ACTIVE SESSION</div>
           </div>
-          <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-white border border-slate-200/80 shadow-sm text-[9px]">
-            <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ backgroundColor: theme.stroke }} />
-            <span className="text-slate-700 font-bold uppercase tracking-wider">{displayState}</span>
+          <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-white border border-slate-200 text-[9px] font-bold text-slate-800 shadow-sm">
+            <span className="w-1.5 h-1.5 rounded-full animate-pulse bg-[#ff4f00]" />
+            <span className="uppercase">{displayState}</span>
           </div>
         </div>
 
-        {/* Minimal Kinetic 3D Neural Orb with Floating Telemetry Badges */}
+        {/* Minimal Kinetic Circle Array */}
         <div className="my-auto flex flex-col items-center justify-center relative w-full">
           
-          {/* HUD Parameter Badge Left */}
-          <div className="absolute left-6 top-1/2 -translate-y-1/2 hidden xl:flex flex-col gap-3 font-mono text-[9px] text-slate-400 border-l border-slate-200 pl-3">
-            <div>
-              <span className="text-slate-300 block">STRESS IDX</span>
-              <span className="text-slate-800 font-bold">14% / NORMAL</span>
-            </div>
-            <div>
-              <span className="text-slate-300 block">BIAS DETECTED</span>
-              <span className="text-slate-800 font-bold">NONE</span>
-            </div>
-          </div>
-
-          {/* HUD Parameter Badge Right */}
-          <div className="absolute right-6 top-1/2 -translate-y-1/2 hidden xl:flex flex-col gap-3 font-mono text-[9px] text-slate-400 border-r border-slate-200 pr-3 text-right">
-            <div>
-              <span className="text-slate-300 block">VITAL SIGNS</span>
-              <span className="text-emerald-600 font-bold">SECURE</span>
-            </div>
-            <div>
-              <span className="text-slate-300 block">drawdown threshold</span>
-              <span className="text-slate-800 font-bold">0.0% LIMIT</span>
-            </div>
-          </div>
-
-          <div 
-            className="relative w-64 h-64 flex items-center justify-center group cursor-pointer"
-            style={{ perspective: '1000px', transformStyle: 'preserve-3d' }}
-          >
-            {/* Outer Circular Path Orbit (Hairline outline) */}
+          <div className="relative w-64 h-64 flex items-center justify-center">
+            
+            {/* Single thin elegant outer layout ring */}
             <div 
-              className="absolute inset-0 rounded-full border border-slate-200/60 transition-all duration-700"
-              style={{ 
-                transform: 'rotateX(60deg) rotateY(10deg)',
-                borderColor: theme.stroke,
-                opacity: 0.25,
-                animation: 'spin 22s linear infinite'
-              }}
+              className="absolute inset-0 rounded-full border border-[#ff4f00]/15 transition-all duration-1000"
+              style={{ borderWidth: '1px' }}
             />
 
-            {/* Middle Orthogonal Path Orbit */}
+            {/* Organic, morphing plaster orange sculpture blob */}
             <div 
-              className="absolute inset-6 rounded-full border border-slate-200/60 border-dashed transition-all duration-700"
-              style={{ 
-                transform: 'rotateX(20deg) rotateY(60deg)',
-                borderColor: theme.stroke,
-                opacity: 0.35,
-                animation: 'spin 18s linear infinite reverse'
-              }}
-            />
-
-            {/* Pulsing inner focal ring */}
-            <div 
-              className="absolute inset-12 rounded-full border border-slate-100 transition-all duration-500"
-              style={{ 
-                boxShadow: `0 10px 40px ${theme.glow}`,
-                transform: displayState === 'speaking' ? 'scale(1.08)' : 'scale(1)'
-              }}
-            />
-
-            {/* Volumetric Spherical Frosted Core */}
-            <div 
-              className="w-28 h-28 rounded-full flex flex-col items-center justify-center transition-all duration-500 relative backdrop-blur-lg border border-white/60 bg-white/40"
+              className="w-28 h-28 bg-[#ff4f00] flex items-center justify-center transition-all duration-700 shadow-sm animate-morph"
               style={{
-                boxShadow: `0 15px 35px -10px rgba(0,0,0,0.06), inset 0 2px 20px rgba(255,255,255,0.9), inset 0 -5px 25px ${theme.glow}`,
-                transform: displayState === 'speaking' ? 'translateZ(15px) scale(1.06)' : 'translateZ(5px) scale(1)',
+                transform: displayState === 'speaking' ? 'scale(1.12)' : 'scale(1)'
               }}
             >
               <Sparkles 
-                size={28} 
-                className={`transition-all duration-500 ${displayState === 'thinking' ? 'animate-spin text-blue-600' : 'text-slate-600'}`} 
+                size={22} 
+                className={`transition-all duration-500 text-white ${displayState === 'thinking' ? 'animate-spin' : ''}`} 
               />
-            </div>
-            
-            {/* Decibel spectrum layout surrounding orb */}
-            <div className="absolute -bottom-4 flex items-center gap-1.5 px-3 py-1 bg-white border border-slate-200 shadow-sm rounded-full">
-              {[25, 60, 30, 85, 40, 90, 50, 70, 20].map((h, i) => (
-                <div 
-                  key={i} 
-                  className="w-1 rounded-full transition-all duration-300 bg-slate-400"
-                  style={{
-                    height: displayState === 'speaking' ? `${Math.max(4, (h * Math.random()))}px` : '4px',
-                    backgroundColor: displayState === 'speaking' ? theme.stroke : '#94a3b8'
-                  }}
-                />
-              ))}
             </div>
           </div>
 
           <div className="mt-10 text-center max-w-sm px-4">
-            <h3 className="font-heading font-extrabold text-xs text-slate-800 mb-1 uppercase tracking-widest">
-              SYSTEM STATEMENT
+            <h3 className="font-heading font-extrabold text-xs text-slate-900 mb-1 uppercase tracking-widest">
+              ASSISTANT LOG
             </h3>
-            <p className="text-xs text-slate-500 leading-relaxed font-sans font-medium italic">
+            <p className="text-xs text-slate-600 leading-relaxed font-sans italic">
               "{message}"
             </p>
           </div>
         </div>
 
-        {/* Vocal Volume control panel */}
-        <div className="w-full flex items-center gap-3 bg-white p-3 rounded-2xl border border-slate-200/80 shadow-sm z-10">
+        {/* Audio Slider bar */}
+        <div className="w-full flex items-center gap-3 bg-white p-3 rounded-xl border border-slate-200 shadow-sm z-10">
           <Volume2 size={13} className="text-slate-400" />
           <input 
             type="range" 
             min="0" max="1" step="0.1" 
             value={volume}
             onChange={(e) => setVolume(parseFloat(e.target.value))}
-            className="w-full h-1 bg-slate-100 rounded-lg appearance-none cursor-pointer accent-slate-800"
+            className="w-full h-1 bg-slate-100 rounded-lg appearance-none cursor-pointer accent-[#ff4f00]"
           />
           <button 
             onClick={toggleMute}
-            className={`p-2 rounded-xl text-xs font-mono transition-all ${muted ? 'bg-rose-50 text-rose-600 border border-rose-200' : 'bg-slate-50 text-slate-600 hover:text-slate-900'}`}
+            className={`p-2 rounded-xl text-xs font-mono transition-all ${muted ? 'bg-rose-50 text-rose-600 border border-rose-200' : 'bg-slate-50 text-slate-600 hover:text-slate-950'}`}
           >
             {muted ? <MicOff size={13} /> : <Volume2 size={13} />}
           </button>
@@ -221,8 +155,8 @@ export default function JarvisCompanion({ state = 'idle', message = 'Standing by
       <div className="lg:w-1/2 p-10 flex flex-col justify-between overflow-hidden bg-white">
         
         {/* Quick prompt shortcut row */}
-        <div className="pb-4 border-b border-slate-200/80 shrink-0 flex flex-col gap-2">
-          <span className="text-[9px] font-mono uppercase tracking-widest text-slate-400">PROMPT STARTERS</span>
+        <div className="pb-4 border-b border-slate-200 shrink-0 flex flex-col gap-2">
+          <span className="text-[9px] font-mono uppercase tracking-widest text-slate-400">PROMPTS</span>
           <div className="flex flex-wrap gap-2">
             {promptChips.map((chip, idx) => {
               const Icon = chip.icon;
@@ -230,9 +164,9 @@ export default function JarvisCompanion({ state = 'idle', message = 'Standing by
                 <button
                   key={idx}
                   onClick={() => handleSend(chip.label)}
-                  className="px-3.5 py-2 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-600 hover:text-slate-900 text-xs font-sans flex items-center gap-1.5 transition-all shadow-sm active:scale-95"
+                  className="px-3.5 py-2 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-600 hover:text-slate-900 text-xs font-sans flex items-center gap-1.5 transition-all shadow-sm active:scale-95 animate-fade-in"
                 >
-                  <Icon size={12} className="text-slate-400 group-hover:text-blue-600" />
+                  <Icon size={11} className="text-[#ff4f00]" />
                   <span>{chip.label}</span>
                 </button>
               );
@@ -246,7 +180,7 @@ export default function JarvisCompanion({ state = 'idle', message = 'Standing by
             <div className="h-full flex flex-col items-center justify-center text-center p-8 text-slate-400 font-mono text-xs">
               <Activity size={24} className="mb-2 text-slate-300 animate-pulse" />
               <p className="text-slate-700 font-heading font-semibold mb-0.5">Dialogue Stream Active</p>
-              <span>Awaiting vocal trigger or text entry command.</span>
+              <span>Awaiting vocal trigger or command query.</span>
             </div>
           )}
 
@@ -261,7 +195,7 @@ export default function JarvisCompanion({ state = 'idle', message = 'Standing by
                   {isUser ? (
                     <><span>TRADER</span><User size={10} className="text-slate-400" /></>
                   ) : (
-                    <><Bot size={10} className="text-blue-600" /><span className="text-slate-900 font-bold">JARVIS CO-PILOT</span></>
+                    <><Bot size={10} className="text-[#ff4f00]" /><span className="text-[#ff4f00] font-bold">JARVIS CO-PILOT</span></>
                   )}
                   <span className="text-slate-200">•</span>
                   <span className="text-[9px] text-slate-400">{new Date(msg.timestamp || Date.now()).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
@@ -269,10 +203,10 @@ export default function JarvisCompanion({ state = 'idle', message = 'Standing by
                 
                 <div className={`p-4 rounded-2xl text-xs leading-relaxed font-sans ${
                   isUser 
-                    ? 'bg-slate-100 text-slate-800 border border-slate-200/60 rounded-tr-none shadow-sm' 
+                    ? 'bg-slate-100 text-slate-800 border border-slate-200 rounded-tr-none shadow-sm' 
                     : msg.severity === 'critical'
                       ? 'bg-rose-50 text-rose-950 border border-rose-200 rounded-tl-none font-medium'
-                      : 'bg-white text-slate-700 border border-slate-200/60 rounded-tl-none shadow-sm'
+                      : 'bg-white text-slate-700 border border-slate-200 rounded-tl-none shadow-sm'
                 }`}>
                   {msg.message}
                 </div>
@@ -281,8 +215,8 @@ export default function JarvisCompanion({ state = 'idle', message = 'Standing by
           })}
 
           {jarvisThinking && (
-            <div className="flex items-center gap-2 self-start bg-blue-50 border border-blue-100 px-4 py-2.5 rounded-2xl rounded-tl-none text-xs text-blue-700 font-mono animate-pulse shadow-sm">
-              <Sparkles size={14} className="animate-spin text-blue-600" />
+            <div className="flex items-center gap-2 self-start bg-orange-50 border border-orange-100 px-4 py-2.5 rounded-2xl rounded-tl-none text-xs text-[#ff4f00] font-mono animate-pulse shadow-sm">
+              <Sparkles size={14} className="animate-spin text-[#ff4f00]" />
               <span>Co-pilot is parsing risk telemetry...</span>
             </div>
           )}
@@ -290,7 +224,7 @@ export default function JarvisCompanion({ state = 'idle', message = 'Standing by
         </div>
 
         {/* Text and speech entry toolbar */}
-        <div className="mt-auto shrink-0 flex items-center gap-3 pt-4 border-t border-slate-100">
+        <div className="mt-auto shrink-0 flex items-center gap-3 pt-4 border-t border-slate-200">
           <button 
             onClick={toggleListen}
             disabled={!recognitionRef.current}
@@ -315,7 +249,7 @@ export default function JarvisCompanion({ state = 'idle', message = 'Standing by
             />
             <button 
               onClick={() => handleSend()}
-              className="absolute right-2 top-1/2 -translate-y-1/2 p-2 bg-slate-900 text-white rounded-lg hover:bg-slate-800 transition-all"
+              className="absolute right-2 top-1/2 -translate-y-1/2 p-2 bg-slate-900 text-white rounded-lg hover:bg-slate-800 transition-all animate-fade-in"
             >
               <ArrowRight size={14} />
             </button>

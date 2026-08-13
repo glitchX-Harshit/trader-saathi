@@ -39,42 +39,90 @@ function App() {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [intervention, setIntervention] = useState(null);
 
-  // GSAP Refs
-  const contentRef = useRef(null);
-  const heroTitleRef = useRef(null);
-  const heroSubRef = useRef(null);
-
-  // Mouse trail tracker for premium ambient glow spot
+  // Mouse Pos state and handler for orange follower glow
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   const handleMouseMove = (e) => {
     setMousePos({ x: e.clientX, y: e.clientY });
   };
 
-  // GSAP Page & Content Reveal Transition
-  useEffect(() => {
-    if (contentRef.current) {
-      gsap.fromTo(contentRef.current,
-        { opacity: 0, y: 20 },
-        { opacity: 1, y: 0, duration: 0.7, ease: 'power3.out' }
-      );
-    }
-  }, [activeTab]);
+  // Preloader state
+  const [loadingPercent, setLoadingPercent] = useState(0);
+  const [isLoaded, setIsLoaded] = useState(false);
 
-  // GSAP Title Entrance Splitting Animation on load
+  // GSAP Refs
+  const contentRef = useRef(null);
+  const heroTitleRef = useRef(null);
+  const heroSubRef = useRef(null);
+  const cursorDotRef = useRef(null);
+  const cursorRingRef = useRef(null);
+  const preloaderRef = useRef(null);
+
+  // Custom Cursor state tracking
+  const [isHoveredInteractive, setIsHoveredInteractive] = useState(false);
+
   useEffect(() => {
-    if (activeTab === 'overview' && heroTitleRef.current) {
-      gsap.fromTo(heroTitleRef.current,
-        { y: 35, opacity: 0 },
-        { y: 0, opacity: 1, duration: 0.8, ease: 'power4.out', delay: 0.15 }
-      );
-      if (heroSubRef.current) {
-        gsap.fromTo(heroSubRef.current,
-          { y: 20, opacity: 0 },
-          { y: 0, opacity: 1, duration: 0.8, ease: 'power3.out', delay: 0.3 }
-        );
+    // 1. Cinematic Preloader Counter Logic
+    let current = 0;
+    const interval = setInterval(() => {
+      current += Math.floor(Math.random() * 15) + 5;
+      if (current >= 100) {
+        current = 100;
+        clearInterval(interval);
+        
+        // Slide preloader up and reveal main interface
+        gsap.to(preloaderRef.current, {
+          yPercent: -100,
+          duration: 1.1,
+          ease: 'power4.inOut',
+          onComplete: () => {
+            setIsLoaded(true);
+            // Trigger entrance animations
+            gsap.fromTo(contentRef.current,
+              { opacity: 0, scale: 0.98, y: 30 },
+              { opacity: 1, scale: 1, y: 0, duration: 1.2, ease: 'power4.out' }
+            );
+          }
+        });
       }
+      setLoadingPercent(current);
+    }, 70);
+
+    // 2. Custom Cursor Follower Engine
+    const moveCursor = (e) => {
+      gsap.to(cursorDotRef.current, {
+        x: e.clientX,
+        y: e.clientY,
+        duration: 0.08,
+        ease: 'power2.out'
+      });
+    };
+
+    window.addEventListener('mousemove', moveCursor);
+
+    // Listen for hover on interactive elements to scale cursor ring
+    const handleMouseOver = (e) => {
+      const target = e.target.closest('button, a, input, [role="button"], .glass-card');
+      setIsHoveredInteractive(!!target);
+    };
+
+    window.addEventListener('mouseover', handleMouseOver);
+
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener('mousemove', moveCursor);
+      window.removeEventListener('mouseover', handleMouseOver);
+    };
+  }, []);
+
+  // GSAP Tab change view transition
+  useEffect(() => {
+    if (isLoaded && contentRef.current) {
+      gsap.fromTo(contentRef.current,
+        { opacity: 0, y: 15 },
+        { opacity: 1, y: 0, duration: 0.6, ease: 'power3.out' }
+      );
     }
-  }, [activeTab]);
+  }, [activeTab, isLoaded]);
 
   // Monitor JARVIS messages for speech and interventions
   useEffect(() => {
@@ -120,46 +168,73 @@ function App() {
   return (
     <div 
       onMouseMove={handleMouseMove}
-      className="flex flex-col h-screen bg-[#fafafb] text-slate-800 font-sans overflow-hidden relative selection:bg-jarvis-accent selection:text-white"
+      className="flex flex-col h-screen bg-[#faf9f6] text-slate-800 font-sans overflow-hidden relative select-none"
     >
-      {/* Interactive Cursor Spotlight Follow */}
+      {/* 1. Preloader Overlay */}
       <div 
-        className="absolute w-[600px] h-[600px] bg-[#1e40af]/3 rounded-full blur-[130px] pointer-events-none transition-all duration-300 ease-out z-0"
-        style={{
-          left: `${mousePos.x - 300}px`,
-          top: `${mousePos.y - 300}px`
-        }}
+        ref={preloaderRef}
+        className="absolute inset-0 bg-[#faf9f6] z-50 flex flex-col justify-between p-12 text-[#1a1a1a]"
+      >
+        <div className="flex justify-between items-center font-mono text-xs text-slate-400">
+          <span>SYSTEM LOADING</span>
+          <span>© 2026 COGNITIVE SAFETY</span>
+        </div>
+        
+        <div className="my-auto flex flex-col items-start gap-4">
+          <span className="text-[12vw] font-display font-black leading-none tracking-tighter text-[#ff4f00] flex items-baseline">
+            {loadingPercent}<span className="text-xl font-mono text-slate-400 ml-4">%</span>
+          </span>
+          <div className="w-48 h-[1px] bg-slate-200 relative overflow-hidden">
+            <div 
+              className="absolute left-0 top-0 h-full bg-[#ff4f00] transition-all duration-300"
+              style={{ width: `${loadingPercent}%` }}
+            />
+          </div>
+        </div>
+
+        <div className="flex justify-between items-end font-mono text-xs text-slate-400">
+          <span>COGNITIVE PROTECTOR INDEX</span>
+          <span>SECURE CORE ACCESS</span>
+        </div>
+      </div>
+
+      {/* 2. Custom Awwwards Minimalist Dot Pointer */}
+      <div 
+        ref={cursorDotRef}
+        className={`fixed w-1.5 h-1.5 bg-[#ff4f00] rounded-full pointer-events-none z-50 -translate-x-1/2 -translate-y-1/2 transition-transform duration-300 hidden md:block ${
+          isHoveredInteractive ? 'scale-[2.5]' : ''
+        }`}
       />
 
       {/* Top Titlebar */}
       <TitleBar />
       
       {/* High-End Awwwards Styled Navigation Header */}
-      <header className="h-20 border-b border-slate-200/60 bg-white/80 backdrop-blur-2xl flex items-center justify-between px-10 z-30 shrink-0 shadow-sm">
+      <header className="h-20 border-b border-slate-200 bg-white flex items-center justify-between px-10 z-30 shrink-0 shadow-sm">
         <div className="flex items-center gap-8">
           <div className="flex items-center gap-3 cursor-pointer group" onClick={() => setActiveTab('overview')}>
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-violet-600 p-[1.5px] group-hover:scale-105 transition-transform duration-300">
+            <div className="w-9 h-9 rounded-xl bg-[#ff4f00] p-[1.5px] group-hover:scale-105 transition-transform duration-300">
               <div className="w-full h-full bg-white rounded-[10px] flex items-center justify-center">
-                <Zap size={18} className="text-blue-600 animate-pulse" />
+                <Zap size={18} className="text-[#ff4f00] animate-pulse" />
               </div>
             </div>
             <div>
               <span className="font-display font-bold text-xl tracking-tight text-slate-900 flex items-center gap-1.5">
-                TRADE<span className="text-blue-600">SAATHI</span>
+                TRADE<span className="text-[#ff4f00]">SAATHI</span>
               </span>
             </div>
           </div>
 
           <span className="text-slate-200 text-lg font-thin hidden lg:inline">|</span>
 
-          <div className="hidden lg:flex items-center gap-2.5 bg-slate-100 border border-slate-200/80 px-4 py-1.5 rounded-full text-xs font-mono text-slate-500">
-            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_#10b981]" />
-            <span>AI ENGINE STATUS // <span className="text-slate-900 font-bold">ACTIVE</span></span>
+          <div className="hidden lg:flex items-center gap-2.5 bg-slate-50 border border-slate-200 px-4 py-1.5 rounded-full text-xs font-mono text-slate-500">
+            <span className="w-2 h-2 rounded-full bg-[#ff4f00] animate-pulse shadow-[0_0_8px_#ff4f00]" />
+            <span>AI PROTECTION ENGINE // <span className="text-slate-900 font-bold">READY</span></span>
           </div>
         </div>
 
         {/* Spacious, Pill-shaped Tab Bar */}
-        <nav className="flex items-center gap-1 bg-slate-100 p-1.5 rounded-2xl border border-slate-200/80 shadow-inner">
+        <nav className="flex items-center gap-1 bg-slate-50 p-1.5 rounded-2xl border border-slate-200 shadow-inner">
           <NavTab label="Sanctuary" icon={LayoutDashboard} active={activeTab === 'overview'} onClick={() => setActiveTab('overview')} />
           <NavTab label="Co-Pilot Studio" icon={Bot} active={activeTab === 'jarvis'} onClick={() => setActiveTab('jarvis')} badge="LIVE" />
           <NavTab label="Behavioral Index" icon={Activity} active={activeTab === 'analytics'} onClick={() => setActiveTab('analytics')} />
@@ -169,14 +244,14 @@ function App() {
 
         {/* Latency & WS Status Telemetry */}
         <div className="flex items-center gap-4">
-          <div className="bg-slate-100 px-4 py-2 rounded-xl border border-slate-200/80 flex items-center gap-2 text-xs font-mono text-slate-600">
-            <Radio size={14} className={connected ? 'text-emerald-600 animate-pulse' : 'text-rose-500'} />
-            <span>{connected ? 'LIVE PAYLOAD' : 'OFFLINE'}</span>
+          <div className="bg-slate-50 px-4 py-2 rounded-xl border border-slate-200 flex items-center gap-2 text-xs font-mono text-slate-600">
+            <Radio size={14} className={connected ? 'text-[#ff4f00] animate-pulse' : 'text-rose-500'} />
+            <span>{connected ? 'LIVE TELEMETRY' : 'OFFLINE'}</span>
           </div>
 
           <button 
             onClick={() => setIsSettingsOpen(true)}
-            className="p-3 rounded-xl bg-slate-100 border border-slate-200/80 hover:border-slate-300 text-slate-500 hover:text-slate-900 transition-all hover:scale-105 active:scale-95"
+            className="p-3 rounded-xl bg-slate-50 border border-slate-200 hover:border-slate-300 text-slate-500 hover:text-slate-900 transition-all hover:scale-105 active:scale-95 shadow-sm"
             title="System Preferences"
           >
             <Settings size={18} />
@@ -193,14 +268,14 @@ function App() {
             <div className="max-w-7xl mx-auto flex flex-col gap-12 pb-16">
               
               {/* Elegant Cinematic Hero Banner */}
-              <div className="flex flex-col lg:flex-row justify-between items-start lg:items-end gap-8 pt-6 border-b border-slate-200/85 pb-12">
+              <div className="flex flex-col lg:flex-row justify-between items-start lg:items-end gap-8 pt-6 border-b border-slate-200 pb-12">
                 <div className="max-w-3xl">
-                  <div className="inline-flex items-center gap-2 bg-blue-50 border border-blue-200 text-blue-700 text-xs font-mono px-4 py-1.5 rounded-full mb-6">
-                    <Sparkles size={14} className="animate-spin-slow text-blue-600" /> SYSTEM STATEMENT // 01
+                  <div className="inline-flex items-center gap-2 bg-orange-50 border border-orange-200 text-[#ff4f00] text-xs font-mono px-4 py-1.5 rounded-full mb-6">
+                    <Sparkles size={14} className="animate-spin-slow text-[#ff4f00]" /> SYSTEM STATUS
                   </div>
                   <h1 ref={heroTitleRef} className="text-5xl lg:text-7xl font-display font-extrabold tracking-tighter text-slate-950 leading-[1.05] uppercase">
                     Protecting your <br />
-                    <span className="font-serif-italic italic font-normal text-blue-600 bg-clip-text text-transparent bg-gradient-to-r from-blue-600 via-indigo-600 to-violet-700 normal-case">
+                    <span className="font-serif-italic italic font-normal text-[#ff4f00] normal-case">
                       cognitive capital.
                     </span>
                   </h1>
@@ -211,7 +286,7 @@ function App() {
 
                 {/* Large CTA Card */}
                 <div className="glass-panel p-8 rounded-2xl border border-slate-200 flex flex-col gap-4 min-w-[320px] shadow-sm relative overflow-hidden group">
-                  <div className="absolute -top-10 -right-10 w-24 h-24 bg-blue-50 rounded-full blur-2xl pointer-events-none group-hover:scale-125 transition-transform" />
+                  <div className="absolute -top-10 -right-10 w-24 h-24 bg-orange-50 rounded-full blur-2xl pointer-events-none group-hover:scale-125 transition-transform" />
                   <div className="text-xs font-mono text-slate-500 uppercase tracking-widest">NET EXPOSURE P&L</div>
                   <div className="flex items-baseline gap-2">
                     <span className="text-4xl font-heading font-extrabold text-slate-900">${sessionPnl.toFixed(2)}</span>
@@ -221,9 +296,9 @@ function App() {
                   </div>
                   <MagneticButton 
                     onClick={() => setActiveTab('jarvis')}
-                    className="w-full py-3.5 bg-blue-600 hover:bg-blue-700 text-white font-mono font-bold text-xs rounded-xl transition-all flex items-center justify-center gap-2 active:scale-95 shadow-md shadow-blue-500/10"
+                    className="w-full py-3.5 bg-[#ff4f00] hover:bg-[#cc3f00] text-white font-mono font-bold text-xs rounded-xl transition-all flex items-center justify-center gap-2 active:scale-95 shadow-md shadow-orange-500/10"
                   >
-                    <span>LAUNCH NEURAL COMPANION</span>
+                    <span>LAUNCH CO-PILOT TERMINAL</span>
                     <ChevronRight size={14} />
                   </MagneticButton>
                 </div>
@@ -236,7 +311,7 @@ function App() {
                   value={`$${sessionPnl.toFixed(2)}`} 
                   tag="NET VALUE"
                   icon={DollarSign}
-                  color={sessionPnl >= 0 ? 'text-emerald-600' : 'text-rose-600'}
+                  color={sessionPnl >= 0 ? 'text-[#ff4f00]' : 'text-rose-600'}
                 />
                 <OverviewCard 
                   title="Total Executed Positions" 
@@ -250,7 +325,7 @@ function App() {
                   value={consecutiveLosses} 
                   tag="LIMIT INDEX"
                   icon={TrendingDown}
-                  color={consecutiveLosses > 2 ? 'text-amber-600' : 'text-slate-700'}
+                  color={consecutiveLosses > 2 ? 'text-[#ff4f00]' : 'text-slate-700'}
                 />
                 <OverviewCard 
                   title="Cognitive Security Level" 
@@ -266,29 +341,29 @@ function App() {
                 <TiltShowcaseCard 
                   onClick={() => setActiveTab('jarvis')}
                   num="01"
-                  category="NEURAL AUDIO CORE"
+                  category="CO-PILOT VOICE CORE"
                   title="JARVIS Speech Center"
                   description="Multimodal conversational voice shield detecting stress and revenge indicators."
                   icon={Bot}
-                  colorClass="bg-blue-50 border-blue-100 text-blue-600 hover:border-blue-500/30"
+                  colorClass="bg-orange-50 border-orange-100 text-[#ff4f00] hover:border-orange-500/30"
                 />
                 <TiltShowcaseCard 
                   onClick={() => setActiveTab('analytics')}
                   num="02"
-                  category="RISK QUANTIFIERS"
+                  category="RISK INDEX GAUGE"
                   title="Cognitive Index Engine"
                   description="Interactive math gauges measuring compliance index, discipline, and stability."
                   icon={Activity}
-                  colorClass="bg-purple-50 border-purple-100 text-purple-600 hover:border-purple-500/30"
+                  colorClass="bg-orange-50 border-orange-100 text-[#ff4f00] hover:border-orange-500/30"
                 />
                 <TiltShowcaseCard 
                   onClick={() => setActiveTab('vision')}
                   num="03"
-                  category="MULTIMODAL HUD"
+                  category="PORTFOLIO HUD"
                   title="Screen Vision Telemetry"
                   description="Direct visual capture of TradingView charts, extracting position sizes and metrics."
                   icon={Eye}
-                  colorClass="bg-emerald-50 border-emerald-100 text-emerald-600 hover:border-emerald-500/30"
+                  colorClass="bg-orange-50 border-orange-100 text-[#ff4f00] hover:border-orange-500/30"
                 />
               </div>
             </div>
@@ -297,10 +372,10 @@ function App() {
           {/* VIEW 2: CO-PILOT VOICE STUDIO */}
           {activeTab === 'jarvis' && (
             <div className="max-w-7xl mx-auto h-[calc(100vh-190px)] flex flex-col gap-6 pb-4">
-              <div className="flex justify-between items-center border-b border-slate-200/80 pb-4 shrink-0">
+              <div className="flex justify-between items-center border-b border-slate-200 pb-4 shrink-0">
                 <div>
                   <h2 className="text-2xl font-heading font-bold text-slate-900 flex items-center gap-2">
-                    <Bot className="text-blue-600" size={24} /> Neural Co-Pilot Studio
+                    <Bot className="text-[#ff4f00]" size={24} /> Neural Co-Pilot Studio
                   </h2>
                   <p className="text-xs font-mono text-slate-500 mt-1">Multi-modal speech interface evaluating your psychological indicators.</p>
                 </div>
@@ -322,9 +397,9 @@ function App() {
           {/* VIEW 3: BEHAVIORAL DIAGNOSTICS */}
           {activeTab === 'analytics' && (
             <div className="max-w-7xl mx-auto flex flex-col gap-8 pb-16">
-              <div className="border-b border-slate-200/80 pb-4">
+              <div className="border-b border-slate-200 pb-4">
                 <h2 className="text-2xl font-heading font-bold text-slate-900 flex items-center gap-2">
-                  <Activity className="text-blue-600" size={24} /> Psychological Index & Metrics
+                  <Activity className="text-[#ff4f00]" size={24} /> Psychological Index & Metrics
                 </h2>
                 <p className="text-xs font-mono text-slate-500 mt-1">Algorithmic risk tracking measuring emotional stability, overtrading patterns, and stop loss moves.</p>
               </div>
@@ -338,10 +413,10 @@ function App() {
           {/* VIEW 4: VISION TERMINAL */}
           {activeTab === 'vision' && (
             <div className="max-w-7xl mx-auto flex flex-col gap-8 pb-16">
-              <div className="flex justify-between items-center border-b border-slate-200/80 pb-4">
+              <div className="flex justify-between items-center border-b border-slate-200 pb-4">
                 <div>
                   <h2 className="text-2xl font-heading font-bold text-slate-900 flex items-center gap-2">
-                    <Eye className="text-blue-600" size={24} /> Screen Vision Telemetry
+                    <Eye className="text-[#ff4f00]" size={24} /> Screen Vision Telemetry
                   </h2>
                   <p className="text-xs font-mono text-slate-500 mt-1">multimodal chart recognition, reading instrument symbols, unrealized PnL, and drawdowns.</p>
                 </div>
@@ -351,7 +426,7 @@ function App() {
                   className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-mono font-bold transition-all border shadow-sm ${
                     capturing 
                       ? 'bg-rose-100 border-rose-200 text-rose-700 animate-pulse' 
-                      : 'bg-blue-600 hover:bg-blue-700 text-white active:scale-95'
+                      : 'bg-[#ff4f00] hover:bg-[#cc3f00] text-white active:scale-95'
                   }`}
                 >
                   <Camera size={16} />
@@ -362,11 +437,10 @@ function App() {
               {/* Capture Viewports */}
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 <div className="lg:col-span-2 glass-panel p-8 rounded-2xl border border-slate-200 min-h-[420px] flex flex-col justify-center items-center relative overflow-hidden">
-                  <div className="reticle-corner" />
                   {capturing ? (
                     <div className="text-center font-mono space-y-3">
-                      <div className="w-16 h-16 rounded-full border-2 border-dashed border-blue-600 animate-spin mx-auto flex items-center justify-center">
-                        <Camera size={24} className="text-blue-600" />
+                      <div className="w-16 h-16 rounded-full border-2 border-dashed border-[#ff4f00] animate-spin mx-auto flex items-center justify-center">
+                        <Camera size={24} className="text-[#ff4f00]" />
                       </div>
                       <p className="text-sm text-slate-900 font-bold">Observation Stream Active</p>
                       <p className="text-xs text-slate-500">Capturing canvas frames for Gemini Vision parser...</p>
@@ -384,21 +458,21 @@ function App() {
                   <h3 className="font-mono text-xs text-slate-500 uppercase tracking-widest mb-4">Parsed Telemetry Matrix</h3>
                   {observation ? (
                     <div className="space-y-4 font-mono text-xs">
-                      <div className="p-3.5 bg-slate-50 rounded-xl border border-slate-200/80">
+                      <div className="p-3.5 bg-slate-50 rounded-xl border border-slate-200">
                         <span className="text-slate-500 block text-[10px] mb-1">PLATFORM</span>
                         <span className="text-slate-900 font-bold text-sm">{observation.platform || 'N/A'}</span>
                       </div>
-                      <div className="p-3.5 bg-slate-50 rounded-xl border border-slate-200/80">
+                      <div className="p-3.5 bg-slate-50 rounded-xl border border-slate-200">
                         <span className="text-slate-500 block text-[10px] mb-1">ACTIVE INSTRUMENT</span>
-                        <span className="text-blue-600 font-bold text-sm">{observation.instrument || 'N/A'}</span>
+                        <span className="text-[#ff4f00] font-bold text-sm">{observation.instrument || 'N/A'}</span>
                       </div>
-                      <div className="p-3.5 bg-slate-50 rounded-xl border border-slate-200/80">
+                      <div className="p-3.5 bg-slate-50 rounded-xl border border-slate-200">
                         <span className="text-slate-500 block text-[10px] mb-1">POSITION SIZE</span>
                         <span className="text-slate-900 font-bold text-sm">{observation.position || 'NONE'}</span>
                       </div>
-                      <div className="p-3.5 bg-slate-50 rounded-xl border border-slate-200/80">
+                      <div className="p-3.5 bg-slate-50 rounded-xl border border-slate-200">
                         <span className="text-slate-500 block text-[10px] mb-1">UNREALIZED PROFIT/LOSS</span>
-                        <span className={`font-bold text-sm ${observation.unrealized_pnl >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
+                        <span className={`font-bold text-sm ${observation.unrealized_pnl >= 0 ? 'text-emerald-600' : 'text-rose-600'}`}>
                           ${observation.unrealized_pnl || 0}
                         </span>
                       </div>
@@ -414,9 +488,9 @@ function App() {
           {/* VIEW 5: AUDIT TIMELINE LOG */}
           {activeTab === 'timeline' && (
             <div className="max-w-7xl mx-auto flex flex-col gap-6 pb-16">
-              <div className="border-b border-slate-200/80 pb-4">
+              <div className="border-b border-slate-200 pb-4">
                 <h2 className="text-2xl font-heading font-bold text-slate-900 flex items-center gap-2">
-                  <Clock className="text-blue-600" size={24} /> Execution Audit Trail
+                  <Clock className="text-[#ff4f00]" size={24} /> Execution Audit Trail
                 </h2>
                 <p className="text-xs font-mono text-slate-500 mt-1">Cryptographic behavioral ledger storing emotional events and interventions.</p>
               </div>
@@ -474,10 +548,9 @@ function TiltShowcaseCard({ onClick, num, category, title, description, icon: Ic
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
       onClick={onClick}
-      className={`glass-card p-8 rounded-2xl border border-slate-200/85 flex flex-col justify-between min-h-[300px] cursor-pointer group relative overflow-hidden bg-white transition-all`}
+      className={`glass-card p-8 rounded-2xl border border-slate-200 flex flex-col justify-between min-h-[300px] cursor-pointer group relative overflow-hidden bg-white transition-all`}
       style={{ transformStyle: 'preserve-3d' }}
     >
-      <div className="reticle-corner" />
       <div className="flex justify-between items-start" style={{ transform: 'translateZ(15px)' }}>
         <div className={`p-3 rounded-xl border group-hover:scale-110 transition-transform ${colorClass}`}>
           <Icon size={20} />
@@ -558,14 +631,14 @@ function NavTab({ label, icon: Icon, active, onClick, badge }) {
       onClick={onClick}
       className={`px-5 py-2.5 rounded-xl text-xs font-mono transition-all duration-300 flex items-center gap-2.5 relative group ${
         active 
-          ? 'bg-blue-600 text-white border border-blue-700 shadow-md font-bold scale-105' 
+          ? 'bg-[#ff4f00] text-white border border-[#cc3f00] shadow-md font-bold scale-105' 
           : 'text-slate-500 hover:text-slate-900 hover:bg-slate-200/50'
       }`}
     >
       <Icon size={14} className={active ? 'text-white' : 'text-slate-400 group-hover:text-slate-600'} />
       <span>{label}</span>
       {badge && (
-        <span className="text-[8px] bg-blue-50 text-blue-700 px-1.5 py-0.5 rounded font-bold border border-blue-200 tracking-widest font-mono">
+        <span className="text-[8px] bg-orange-50 text-[#ff4f00] px-1.5 py-0.5 rounded font-bold border border-orange-200 tracking-widest font-mono">
           {badge}
         </span>
       )}
@@ -575,12 +648,11 @@ function NavTab({ label, icon: Icon, active, onClick, badge }) {
 
 function OverviewCard({ title, value, tag, icon: Icon, color = 'text-slate-900' }) {
   return (
-    <div className="glass-card p-6 rounded-2xl border border-slate-200 flex flex-col gap-3 relative overflow-hidden group hover:border-blue-500/30 bg-white">
-      <div className="reticle-corner" />
+    <div className="glass-card p-6 rounded-2xl border border-slate-200 flex flex-col gap-3 relative overflow-hidden group hover:border-[#ff4f00]/30 bg-white">
       <div className="flex justify-between items-center">
         <span className="text-[10px] font-mono text-slate-500 uppercase tracking-widest">{title}</span>
-        <div className="p-2.5 bg-slate-50 border border-slate-100 rounded-xl group-hover:bg-blue-50 group-hover:text-blue-600 transition-colors">
-          <Icon size={15} className="text-slate-500 group-hover:text-blue-600" />
+        <div className="p-2.5 bg-slate-50 border border-slate-100 rounded-xl group-hover:bg-orange-50 group-hover:text-[#ff4f00] transition-colors">
+          <Icon size={15} className="text-slate-500 group-hover:text-[#ff4f00]" />
         </div>
       </div>
 
