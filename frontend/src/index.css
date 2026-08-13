@@ -93,6 +93,16 @@
   animation: morph 7s ease-in-out infinite;
 }
 
+@keyframes marquee {
+  0% { transform: translate3d(0, 0, 0); }
+  100% { transform: translate3d(-50%, 0, 0); }
+}
+
+.animate-marquee {
+  display: inline-block;
+  animation: marquee 28s linear infinite;
+}
+
 html, body {
   margin: 0;
   padding: 0;

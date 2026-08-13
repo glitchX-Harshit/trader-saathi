@@ -39,12 +39,6 @@ function App() {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [intervention, setIntervention] = useState(null);
 
-  // Mouse Pos state and handler for orange follower glow
-  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
-  const handleMouseMove = (e) => {
-    setMousePos({ x: e.clientX, y: e.clientY });
-  };
-
   // Preloader state
   const [loadingPercent, setLoadingPercent] = useState(0);
   const [isLoaded, setIsLoaded] = useState(false);
@@ -54,7 +48,7 @@ function App() {
   const heroTitleRef = useRef(null);
   const heroSubRef = useRef(null);
   const cursorDotRef = useRef(null);
-  const cursorRingRef = useRef(null);
+  const spotlightRef = useRef(null);
   const preloaderRef = useRef(null);
 
   // Custom Cursor state tracking
@@ -87,14 +81,14 @@ function App() {
       setLoadingPercent(current);
     }, 70);
 
-    // 2. Custom Cursor Follower Engine
+    // 2. High-Performance Instant Cursor & Cinematic Spotlight Follower (GPU Accelerated)
     const moveCursor = (e) => {
-      gsap.to(cursorDotRef.current, {
-        x: e.clientX,
-        y: e.clientY,
-        duration: 0.08,
-        ease: 'power2.out'
-      });
+      if (cursorDotRef.current) {
+        cursorDotRef.current.style.transform = `translate3d(${e.clientX}px, ${e.clientY}px, 0)`;
+      }
+      if (spotlightRef.current) {
+        spotlightRef.current.style.transform = `translate3d(${e.clientX - 300}px, ${e.clientY - 300}px, 0)`;
+      }
     };
 
     window.addEventListener('mousemove', moveCursor);
@@ -166,10 +160,15 @@ function App() {
   const consecutiveLosses = hasData ? (traderState?.consecutive_losses ?? 0) : '--';
 
   return (
-    <div 
-      onMouseMove={handleMouseMove}
-      className="flex flex-col h-screen bg-[#faf9f6] text-slate-800 font-sans overflow-hidden relative select-none"
-    >
+    <div className="flex flex-col h-screen bg-[#faf9f6] text-slate-800 font-sans overflow-hidden relative select-none">
+      
+      {/* High-performance GPU Spotlight follow background */}
+      <div 
+        ref={spotlightRef}
+        className="fixed w-[600px] h-[600px] bg-[#ff4f00]/3 rounded-full blur-[130px] pointer-events-none z-0 left-0 top-0 will-change-transform hidden md:block"
+        style={{ transform: 'translate3d(-300px, -300px, 0)' }}
+      />
+
       {/* 1. Preloader Overlay */}
       <div 
         ref={preloaderRef}
@@ -201,60 +200,48 @@ function App() {
       {/* 2. Custom Awwwards Minimalist Dot Pointer */}
       <div 
         ref={cursorDotRef}
-        className={`fixed w-1.5 h-1.5 bg-[#ff4f00] rounded-full pointer-events-none z-50 -translate-x-1/2 -translate-y-1/2 transition-transform duration-300 hidden md:block ${
-          isHoveredInteractive ? 'scale-[2.5]' : ''
-        }`}
+        className="fixed left-0 top-0 w-1.5 h-1.5 bg-[#ff4f00] rounded-full pointer-events-none z-50 -translate-x-1/2 -translate-y-1/2 will-change-transform hidden md:block"
       />
 
       {/* Top Titlebar */}
       <TitleBar />
       
       {/* High-End Awwwards Styled Navigation Header */}
-      <header className="h-20 border-b border-slate-200 bg-white flex items-center justify-between px-10 z-30 shrink-0 shadow-sm">
-        <div className="flex items-center gap-8">
-          <div className="flex items-center gap-3 cursor-pointer group" onClick={() => setActiveTab('overview')}>
-            <div className="w-9 h-9 rounded-xl bg-[#ff4f00] p-[1.5px] group-hover:scale-105 transition-transform duration-300">
-              <div className="w-full h-full bg-white rounded-[10px] flex items-center justify-center">
-                <Zap size={18} className="text-[#ff4f00] animate-pulse" />
-              </div>
-            </div>
-            <div>
-              <span className="font-display font-bold text-xl tracking-tight text-slate-900 flex items-center gap-1.5">
-                TRADE<span className="text-[#ff4f00]">SAATHI</span>
-              </span>
-            </div>
+      {/* Top Header - High-End Awwwards Editorial Style */}
+      <header className="h-20 border-b border-slate-200 bg-white flex items-center justify-between px-12 z-30 shrink-0 select-none">
+        
+        {/* Brand identity logo */}
+        <div className="flex items-center gap-3 cursor-pointer group" onClick={() => setActiveTab('overview')}>
+          <div className="w-8 h-8 rounded-lg bg-[#ff4f00] flex items-center justify-center group-hover:scale-105 transition-transform duration-300">
+            <Zap size={15} className="text-white" />
           </div>
-
-          <span className="text-slate-200 text-lg font-thin hidden lg:inline">|</span>
-
-          <div className="hidden lg:flex items-center gap-2.5 bg-slate-50 border border-slate-200 px-4 py-1.5 rounded-full text-xs font-mono text-slate-500">
-            <span className="w-2 h-2 rounded-full bg-[#ff4f00] animate-pulse shadow-[0_0_8px_#ff4f00]" />
-            <span>AI PROTECTION ENGINE // <span className="text-slate-900 font-bold">READY</span></span>
-          </div>
+          <span className="font-display font-black text-lg tracking-tighter text-slate-900 uppercase">
+            TRADE<span className="text-[#ff4f00]">SAATHI</span>
+          </span>
         </div>
 
-        {/* Spacious, Pill-shaped Tab Bar */}
-        <nav className="flex items-center gap-1 bg-slate-50 p-1.5 rounded-2xl border border-slate-200 shadow-inner">
-          <NavTab label="Sanctuary" icon={LayoutDashboard} active={activeTab === 'overview'} onClick={() => setActiveTab('overview')} />
-          <NavTab label="Co-Pilot Studio" icon={Bot} active={activeTab === 'jarvis'} onClick={() => setActiveTab('jarvis')} badge="LIVE" />
-          <NavTab label="Behavioral Index" icon={Activity} active={activeTab === 'analytics'} onClick={() => setActiveTab('analytics')} />
-          <NavTab label="Vision Telemetry" icon={Eye} active={activeTab === 'vision'} onClick={() => setActiveTab('vision')} />
-          <NavTab label="Execution ledger" icon={Clock} active={activeTab === 'timeline'} onClick={() => setActiveTab('timeline')} />
+        {/* Clean, typographic line-separated Tab Bar */}
+        <nav className="flex items-center h-full border-x border-slate-200">
+          <NavTab label="Sanctuary" active={activeTab === 'overview'} onClick={() => setActiveTab('overview')} />
+          <NavTab label="Studio" active={activeTab === 'jarvis'} onClick={() => setActiveTab('jarvis')} />
+          <NavTab label="Diagnostics" active={activeTab === 'analytics'} onClick={() => setActiveTab('analytics')} />
+          <NavTab label="Vision HUD" active={activeTab === 'vision'} onClick={() => setActiveTab('vision')} />
+          <NavTab label="Ledger" active={activeTab === 'timeline'} onClick={() => setActiveTab('timeline')} />
         </nav>
 
-        {/* Latency & WS Status Telemetry */}
-        <div className="flex items-center gap-4">
-          <div className="bg-slate-50 px-4 py-2 rounded-xl border border-slate-200 flex items-center gap-2 text-xs font-mono text-slate-600">
-            <Radio size={14} className={connected ? 'text-[#ff4f00] animate-pulse' : 'text-rose-500'} />
-            <span>{connected ? 'LIVE TELEMETRY' : 'OFFLINE'}</span>
+        {/* Connection status and settings */}
+        <div className="flex items-center gap-6">
+          <div className="flex items-center gap-2 text-[10px] font-mono text-slate-400">
+            <span className={`w-1.5 h-1.5 rounded-full ${connected ? 'bg-[#ff4f00] animate-pulse' : 'bg-rose-500'}`} />
+            <span className="tracking-widest uppercase">{connected ? 'NODE // ACTIVE' : 'NODE // STANDBY'}</span>
           </div>
 
           <button 
             onClick={() => setIsSettingsOpen(true)}
-            className="p-3 rounded-xl bg-slate-50 border border-slate-200 hover:border-slate-300 text-slate-500 hover:text-slate-900 transition-all hover:scale-105 active:scale-95 shadow-sm"
-            title="System Preferences"
+            className="p-2.5 rounded-lg border border-slate-200 hover:border-[#ff4f00] text-slate-500 hover:text-slate-900 transition-colors"
+            title="Preferences"
           >
-            <Settings size={18} />
+            <Settings size={15} />
           </button>
         </div>
       </header>
@@ -334,6 +321,14 @@ function App() {
                   icon={ShieldAlert}
                   color={riskLevel === 'HIGH RISK' ? 'text-rose-600' : riskLevel === 'MODERATE' ? 'text-amber-600' : 'text-emerald-600'}
                 />
+              </div>
+
+              {/* Dynamic scrolling text ticker (marquee) */}
+              <div className="w-full overflow-hidden border-y border-slate-200 py-3.5 bg-white whitespace-nowrap select-none font-semibold">
+                <div className="animate-marquee inline-block font-mono text-[9px] text-[#1a1a1a] tracking-[0.2em] uppercase">
+                  <span>COGNITIVE SECURITY SECURED // BEHAVIOR ENGINE STEADY // EXPOSURE LIMIT SECURE // CO-PILOT ONLINE // REVENGE THREAT RESOLVED // CONTEXT DECAY STABLE //&nbsp;&nbsp;</span>
+                  <span>COGNITIVE SECURITY SECURED // BEHAVIOR ENGINE STEADY // EXPOSURE LIMIT SECURE // CO-PILOT ONLINE // REVENGE THREAT RESOLVED // CONTEXT DECAY STABLE //&nbsp;&nbsp;</span>
+                </div>
               </div>
 
               {/* Showcase Section: Interactive Feature Highlights with 3D perspective Tilt */}
@@ -568,38 +563,10 @@ function TiltShowcaseCard({ onClick, num, category, title, description, icon: Ic
   );
 }
 
-// Magnetic Button Wrapper Component using GSAP
+// Magnetic Button Wrapper Component (Disabled magnetic offset for Awwwards layout)
 function MagneticButton({ children, className, onClick }) {
-  const magnetRef = useRef(null);
-
-  const handleMouseMove = (e) => {
-    if (!magnetRef.current) return;
-    const bounding = magnetRef.current.getBoundingClientRect();
-    const x = e.clientX - bounding.left - bounding.width / 2;
-    const y = e.clientY - bounding.top - bounding.height / 2;
-    gsap.to(magnetRef.current, {
-      x: x * 0.4,
-      y: y * 0.4,
-      duration: 0.35,
-      ease: 'power2.out'
-    });
-  };
-
-  const handleMouseLeave = () => {
-    if (!magnetRef.current) return;
-    gsap.to(magnetRef.current, {
-      x: 0,
-      y: 0,
-      duration: 0.6,
-      ease: 'elastic.out(1.1, 0.4)'
-    });
-  };
-
   return (
     <button
-      ref={magnetRef}
-      onMouseMove={handleMouseMove}
-      onMouseLeave={handleMouseLeave}
       onClick={onClick}
       className={className}
     >
@@ -608,40 +575,32 @@ function MagneticButton({ children, className, onClick }) {
   );
 }
 
-function NavTab({ label, icon: Icon, active, onClick, badge }) {
-  const tabRef = useRef(null);
-
-  const handleMouseEnter = () => {
-    if (!active && tabRef.current) {
-      gsap.to(tabRef.current, { scale: 1.05, y: -1, duration: 0.2 });
-    }
-  };
-
-  const handleMouseLeave = () => {
-    if (!active && tabRef.current) {
-      gsap.to(tabRef.current, { scale: 1, y: 0, duration: 0.2 });
-    }
-  };
-
+function NavTab({ label, active, onClick }) {
   return (
     <button 
-      ref={tabRef}
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
       onClick={onClick}
-      className={`px-5 py-2.5 rounded-xl text-xs font-mono transition-all duration-300 flex items-center gap-2.5 relative group ${
+      className={`px-8 h-full text-xs font-mono transition-all duration-300 flex items-center gap-3 border-r border-slate-200 relative overflow-hidden group ${
         active 
-          ? 'bg-[#ff4f00] text-white border border-[#cc3f00] shadow-md font-bold scale-105' 
-          : 'text-slate-500 hover:text-slate-900 hover:bg-slate-200/50'
+          ? 'text-[#ff4f00] font-bold bg-[#faf9f6]' 
+          : 'text-slate-500 hover:text-slate-900 hover:bg-[#faf9f6]/30'
       }`}
     >
-      <Icon size={14} className={active ? 'text-white' : 'text-slate-400 group-hover:text-slate-600'} />
-      <span>{label}</span>
-      {badge && (
-        <span className="text-[8px] bg-orange-50 text-[#ff4f00] px-1.5 py-0.5 rounded font-bold border border-orange-200 tracking-widest font-mono">
-          {badge}
+      {/* Typographic Text Roll Flip Animation */}
+      <span className="relative overflow-hidden block h-4">
+        <span className="block transition-transform duration-300 group-hover:-translate-y-full">
+          {label}
         </span>
-      )}
+        <span className="block absolute top-0 left-0 transition-transform duration-300 translate-y-full group-hover:translate-y-0 text-[#ff4f00]">
+          {label}
+        </span>
+      </span>
+      
+      {/* Bottom sliding orange active line indicator */}
+      <div 
+        className={`absolute bottom-0 left-0 w-full h-[2.5px] bg-[#ff4f00] transition-transform duration-300 ${
+          active ? 'translate-y-0' : 'translate-y-[3px]'
+        }`}
+      />
     </button>
   );
 }
