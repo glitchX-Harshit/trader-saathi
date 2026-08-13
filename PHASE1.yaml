@@ -1,0 +1,1227 @@
+project:
+  name: "TradeSaathi"
+  codename: "JARVIS"
+  version: "0.1.0"
+  type: "AI Trading Psychology Companion"
+  platform: "Web Application"
+
+  vision: >
+    Build a JARVIS-style AI companion for traders.
+
+    TradeSaathi is not primarily a trading signal generator and is not an
+    automated trading bot. Its core purpose is to act as an intelligent,
+    real-time behavioral and psychological companion that helps traders
+    maintain discipline during stressful trading situations.
+
+    The long-term vision is for JARVIS to observe whatever trading platform
+    the user is using, including TradingView, Groww, Zerodha, MetaTrader,
+    broker websites, and other trading applications through explicit
+    user-authorized screen sharing.
+
+    JARVIS should understand the visible trading context, recognize
+    behavioral patterns associated with impulsive decisions, maintain a
+    personal behavioral profile of the trader, and communicate naturally
+    through text and voice.
+
+  critical_strategy:
+    build_incrementally: true
+    prototype_first: true
+    do_not_overbuild: true
+
+    rule: >
+      Build only Phase 1 in this task. Do not implement the complete
+      long-term product.
+
+# ============================================================
+# PRODUCT PHILOSOPHY
+# ============================================================
+
+product_philosophy:
+
+  core_problem: >
+    Traders often make irrational decisions when trading alone.
+    Psychological pressure, losses, greed, fear, revenge trading,
+    overconfidence, FOMO, overtrading, and impulsive position sizing can
+    cause traders to violate their own trading plans.
+
+  core_solution: >
+    JARVIS acts like an intelligent trading companion sitting beside the
+    trader.
+
+    It observes trading context, understands behavioral patterns,
+    communicates through voice and text, and intervenes when the trader's
+    behavior significantly deviates from their normal process.
+
+  key_positioning: >
+    JARVIS does not predict the market.
+    JARVIS protects the trader's decision-making process.
+
+  product_statement: >
+    "Your AI trading discipline partner."
+
+  secondary_statement: >
+    "It doesn't predict the market. It protects you from yourself."
+
+# ============================================================
+# VERY IMPORTANT SAFETY / PRODUCT BOUNDARY
+# ============================================================
+
+safety:
+
+  phase_1:
+    real_trading: false
+    broker_connections: false
+    order_execution: false
+    order_modification: false
+    automatic_buy_sell: false
+    real_money: false
+    real_market_data: false
+
+  rules:
+    - >
+      Never place, modify, or close a real trade.
+
+    - >
+      Never connect to a real brokerage account in Phase 1.
+
+    - >
+      Clearly label all simulated trading data as SIMULATED.
+
+    - >
+      Do not claim to know the user's emotional state with certainty.
+
+    - >
+      Detect behavioral patterns rather than diagnosing emotions or
+      psychological conditions.
+
+    - >
+      Never guarantee profits or trading outcomes.
+
+    - >
+      The system should encourage adherence to the user's predefined
+      risk-management process rather than make trading decisions for them.
+
+# ============================================================
+# PHASE ROADMAP
+# ============================================================
+
+roadmap:
+
+  phase_1:
+    name: "JARVIS Web Prototype"
+    status: "BUILD NOW"
+
+    goal: >
+      Prove the core JARVIS experience using simulated trading events.
+
+    features:
+      - React web application
+      - FastAPI backend
+      - WebSocket communication
+      - JARVIS companion UI
+      - simulated trading session
+      - simulated P&L
+      - behavioral state engine
+      - revenge trading detection
+      - contextual JARVIS responses
+      - text-to-speech
+      - event timeline
+      - behavioral dashboard
+      - mock screen observation
+
+  phase_2:
+    name: "Screen-Aware JARVIS"
+    status: "FUTURE"
+
+    features:
+      - browser Screen Capture API
+      - user-authorized screen sharing
+      - selected-window observation
+      - selected-tab observation
+      - frame sampling
+      - OCR
+      - computer vision
+      - trading UI recognition
+
+  phase_3:
+    name: "Platform-Agnostic Observation"
+    status: "FUTURE"
+
+    target_platforms:
+      - TradingView
+      - Groww
+      - Zerodha
+      - MetaTrader
+      - broker web applications
+      - other trading terminals
+
+  phase_4:
+    name: "Personal Behavioral Intelligence"
+    status: "FUTURE"
+
+    features:
+      - trading history
+      - behavioral history
+      - personal trader profile
+      - recurring pattern detection
+      - personalized interventions
+      - session psychology analysis
+
+  phase_5:
+    name: "Real-Time Voice JARVIS"
+    status: "FUTURE"
+
+    features:
+      - speech recognition
+      - natural voice conversation
+      - low latency streaming voice
+      - voice interruption
+      - continuous context
+      - conversational memory
+      - customizable JARVIS personality
+
+# ============================================================
+# TECHNOLOGY STACK
+# ============================================================
+
+stack:
+
+  frontend:
+    framework: "React.js"
+    language: "JavaScript"
+    build_tool: "Vite"
+    styling: "Tailwind CSS"
+    state_management: "React Context or lightweight state management"
+    communication: "WebSocket"
+    application_type: "Web Application"
+
+  backend:
+    framework: "FastAPI"
+    language: "Python"
+    async: true
+    communication:
+      - REST
+      - WebSocket
+
+  database:
+    phase_1:
+      type: "SQLite"
+      purpose: "Local prototype persistence"
+
+    future:
+      type: "PostgreSQL"
+
+  voice:
+    phase_1:
+      type: "Browser Text-to-Speech API"
+
+    future:
+      options:
+        - "OpenAI realtime voice"
+        - "other low-latency TTS/STT provider"
+
+  screen_observation:
+    phase_1:
+      type: "Mock"
+
+    future:
+      type: "Browser Screen Capture API"
+
+# ============================================================
+# ARCHITECTURE
+# ============================================================
+
+architecture:
+
+  overview: >
+
+    User
+      ↓
+    React JARVIS Web Interface
+      ↓
+    WebSocket
+      ↓
+    FastAPI
+      ↓
+    Observation Layer
+      ↓
+    Trading State
+      ↓
+    Behavioral Engine
+      ↓
+    JARVIS Intelligence
+      ↓
+    Text + Voice
+      ↓
+    Trader
+
+  components:
+
+    frontend:
+      responsibilities:
+        - JARVIS interface
+        - floating companion
+        - trading state
+        - behavioral state
+        - event timeline
+        - conversation UI
+        - voice controls
+        - simulated screen
+        - session controls
+
+    backend:
+      responsibilities:
+        - API
+        - WebSocket
+        - session management
+        - mock trading engine
+        - behavioral engine
+        - JARVIS response engine
+
+    observation_layer:
+      phase_1:
+        type: "Mock Observation Layer"
+
+      future:
+        inputs:
+          - screen_capture
+          - OCR
+          - computer_vision
+          - trading_APIs
+          - user_voice
+
+    intelligence_layer:
+      phase_1:
+        type: "Rule-Based Behavioral Engine"
+
+      future:
+        components:
+          - LLM
+          - behavioral_model
+          - trader_memory
+          - historical_analysis
+
+# ============================================================
+# PROJECT STRUCTURE
+# ============================================================
+
+project_structure:
+
+  root:
+    files:
+      - README.md
+      - .gitignore
+      - docker-compose.yml
+
+  frontend:
+    directories:
+      - src
+      - public
+
+    src:
+      directories:
+        - components
+        - pages
+        - hooks
+        - services
+        - context
+        - utils
+        - assets
+
+      files:
+        - App.jsx
+        - main.jsx
+        - index.css
+
+  backend:
+    directories:
+      - app
+      - tests
+
+    app:
+      directories:
+        - api
+        - behavior
+        - models
+        - services
+        - websocket
+        - mock
+        - core
+
+      files:
+        - main.py
+
+# ============================================================
+# JARVIS UI
+# ============================================================
+
+ui:
+
+  design_direction:
+    style: "Premium futuristic AI assistant"
+    theme: "Dark"
+    personality: "Intelligent and calm"
+
+    characteristics:
+      - futuristic
+      - minimal
+      - premium
+      - cinematic
+      - professional
+      - intelligent
+      - calm
+      - high information density
+
+    avoid:
+      - generic SaaS dashboard
+      - excessive gradients
+      - childish graphics
+      - crypto-bro aesthetic
+      - excessive neon
+      - visual clutter
+      - unnecessary cards everywhere
+
+  layout:
+
+    main:
+      type: "Trading workspace"
+
+    floating_companion:
+      position: "bottom-right"
+
+      default:
+        compact: true
+
+      expanded:
+        show:
+          - JARVIS avatar
+          - current state
+          - current message
+          - microphone button
+          - mute button
+          - observation status
+
+  screens:
+
+    dashboard:
+      sections:
+        - JARVIS companion
+        - trader state
+        - current trading context
+        - behavioral score
+        - event timeline
+        - intervention panel
+        - simulated screen
+
+# ============================================================
+# JARVIS STATES
+# ============================================================
+
+jarvis_states:
+
+  idle:
+    label: "JARVIS"
+    description: "Monitoring"
+
+  observing:
+    label: "Observing"
+    description: "Analyzing trading context"
+
+  thinking:
+    label: "Thinking"
+    description: "Evaluating behavioral signals"
+
+  speaking:
+    label: "Speaking"
+    description: "JARVIS is responding"
+
+  stable:
+    label: "Stable"
+    description: "Trading behavior appears normal"
+
+  elevated:
+    label: "Elevated"
+    description: "Behavior is beginning to deviate"
+
+  warning:
+    label: "Behavioral Warning"
+    description: "Potential impulsive behavior detected"
+
+# ============================================================
+# TRADER BEHAVIOR ENGINE
+# ============================================================
+
+behavior_engine:
+
+  implementation: "Deterministic rule-based system"
+
+  purpose: >
+    Detect behavioral patterns from simulated trading activity.
+
+  states:
+
+    stable:
+      description: >
+        Trader behavior remains within their normal simulated range.
+
+    elevated:
+      description: >
+        Trading behavior is beginning to deviate from normal behavior.
+
+    impulsive:
+      description: >
+        Trader is making unusually rapid or risky decisions.
+
+    revenge_risk:
+      description: >
+        Trader has experienced a recent loss and is displaying behavior
+        historically associated with revenge trading.
+
+  signals:
+
+    trade_loss:
+      event: "TRADE_LOSS"
+
+    trade_profit:
+      event: "TRADE_PROFIT"
+
+    rapid_reentry:
+      event: "RAPID_REENTRY"
+
+    increased_position:
+      event: "POSITION_SIZE_INCREASE"
+
+    moved_stop_loss:
+      event: "STOP_LOSS_MOVED"
+
+    consecutive_losses:
+      event: "CONSECUTIVE_LOSSES"
+
+    high_trade_frequency:
+      event: "HIGH_TRADE_FREQUENCY"
+
+# ============================================================
+# BEHAVIORAL RULES
+# ============================================================
+
+behavior_rules:
+
+  revenge_trading:
+
+    trigger:
+
+      all:
+        - "previous_trade_result == LOSS"
+        - "time_since_previous_trade < 60 seconds"
+        - "position_size_change > 30%"
+
+    resulting_state: "revenge_risk"
+
+    severity: "high"
+
+    confidence: 0.90
+
+  rapid_reentry:
+
+    trigger:
+      - "time_since_previous_trade < 30 seconds"
+
+    resulting_state: "impulsive"
+
+    severity: "medium"
+
+  position_increase:
+
+    trigger:
+      - "position_size_change > 30%"
+
+    resulting_state: "elevated"
+
+    severity: "medium"
+
+  consecutive_losses:
+
+    trigger:
+      - "consecutive_losses >= 2"
+
+    resulting_state: "elevated"
+
+    severity: "medium"
+
+# ============================================================
+# MOCK TRADING ENGINE
+# ============================================================
+
+mock_trading_engine:
+
+  purpose: >
+    Simulate realistic trading behavior so the JARVIS experience can be
+    demonstrated without connecting to a broker.
+
+  events:
+
+    - trade_opened
+    - trade_closed_profit
+    - trade_closed_loss
+    - stop_loss_hit
+    - take_profit_hit
+    - position_size_increased
+    - stop_loss_moved
+    - rapid_reentry
+    - consecutive_loss
+
+  simulated_data:
+
+    platforms:
+      - TradingView
+      - Groww
+      - Zerodha
+      - MT5
+
+    symbols:
+      - BTCUSDT
+      - ETHUSDT
+      - NIFTY
+      - BANKNIFTY
+      - RELIANCE
+      - TCS
+      - EURUSD
+
+  controls:
+
+    - "Simulate Profit"
+    - "Simulate Loss"
+    - "Simulate Revenge Trade"
+    - "Increase Position"
+    - "Move Stop Loss"
+    - "Rapid Re-entry"
+    - "Reset Session"
+
+# ============================================================
+# DEMO SCENARIO
+# ============================================================
+
+demo_scenario:
+
+  name: "Revenge Trading Intervention"
+
+  sequence:
+
+    step_1:
+      action: "Open simulated trade"
+
+      jarvis:
+        text: >
+          "I'm monitoring your position."
+
+    step_2:
+      action: "Simulate loss"
+
+      trade:
+        pnl: -500
+
+      jarvis:
+        text: >
+          "The trade closed at a loss. Your original risk was respected.
+          Give yourself a moment before evaluating another setup."
+
+    step_3:
+      action: "Rapid re-entry"
+
+      data:
+        seconds_since_loss: 18
+
+    step_4:
+      action: "Increase position"
+
+      data:
+        increase_percentage: 80
+
+    step_5:
+      expected_detection:
+        state: "revenge_risk"
+        pattern: "possible_revenge_trading"
+
+      jarvis:
+        text: >
+          "Pause. Your current behavior is significantly different from
+          your normal trading pattern. You entered only 18 seconds after
+          the loss and increased your position size by 80%. This resembles
+          a revenge-trading pattern. I recommend stepping away before
+          taking another position."
+
+# ============================================================
+# JARVIS RESPONSE ENGINE
+# ============================================================
+
+jarvis_response_engine:
+
+  architecture:
+    interface: "ResponseEngine"
+
+  phase_1:
+    implementation: "Rule-based response generation"
+
+  future:
+    implementation: "LLM-powered response generation"
+
+  response_categories:
+
+    informational:
+      example: >
+        "Your position is currently moving against you. Your original risk
+        parameters are still intact."
+
+    warning:
+      example: >
+        "I noticed your position size is significantly larger than your
+        normal trade."
+
+    behavioral:
+      example: >
+        "This looks similar to your previous revenge-trading pattern."
+
+    intervention:
+      example: >
+        "Pause. You entered only 18 seconds after your previous loss and
+        increased your position size by 80%."
+
+    post_trade:
+      example: >
+        "The stop loss was hit. Before taking another trade, let's review
+        whether the original setup was actually invalidated."
+
+  personality:
+
+    name: "JARVIS"
+
+    characteristics:
+      - calm
+      - intelligent
+      - concise
+      - confident
+      - respectful
+      - psychologically aware
+      - non-judgmental
+      - professional
+
+    communication_rules:
+      - "Never insult the trader."
+      - "Never shame the trader."
+      - "Never overreact."
+      - "Do not constantly interrupt."
+      - "Speak only when intervention is meaningful."
+      - "Use historical behavior when available."
+      - "Explain why an intervention occurred."
+
+# ============================================================
+# VOICE
+# ============================================================
+
+voice:
+
+  phase_1:
+
+    technology:
+      type: "Browser Web Speech / Text-to-Speech API"
+
+    capabilities:
+      - speak_JARVIS_response
+      - mute
+      - volume_control
+      - speaking_state
+      - text_and_voice_sync
+
+  UI:
+
+    controls:
+      - microphone
+      - mute
+      - volume
+
+  future:
+    - speech_to_text
+    - real_time_voice
+    - streaming_voice
+    - interruption
+    - wake_word
+    - conversational_memory
+
+# ============================================================
+# SCREEN OBSERVATION
+# ============================================================
+
+screen_observation:
+
+  phase_1:
+
+    implementation: "MOCK ONLY"
+
+    UI:
+      title: "Screen Observation"
+
+      label: "SIMULATED SCREEN FEED"
+
+      show:
+        - simulated_platform
+        - simulated_chart
+        - simulated_symbol
+        - simulated_position
+        - simulated_entry
+        - simulated_PnL
+        - simulated_stop_loss
+        - simulated_take_profit
+
+  phase_2:
+
+    implementation: "Browser Screen Capture API"
+
+    user_flow:
+
+      - "User clicks Start Observation"
+      - "Browser requests screen permission"
+      - "User selects screen, window, or tab"
+      - "React receives MediaStream"
+      - "Observation pipeline processes selected frames"
+
+    privacy:
+
+      - "Explicit user permission required"
+      - "Visible observation status"
+      - "Stop Observation button always available"
+      - "Never capture without permission"
+      - "Never silently capture the user's screen"
+
+  future_pipeline:
+
+    screen:
+      ↓
+    frame_sampling:
+      ↓
+    change_detection:
+      ↓
+    OCR:
+      ↓
+    computer_vision:
+      ↓
+    structured_trading_state:
+      ↓
+    behavioral_engine
+
+# ============================================================
+# FUTURE PLATFORM AGNOSTIC DESIGN
+# ============================================================
+
+platform_agnostic_architecture:
+
+  principle: >
+    JARVIS must not be tightly coupled to TradingView.
+
+    The long-term system should treat every trading application as an
+    observation source.
+
+  possible_sources:
+
+    - TradingView
+    - Groww
+    - Zerodha
+    - MetaTrader
+    - broker web applications
+    - browser-based terminals
+    - desktop trading applications
+
+  normalized_state:
+
+    platform: "string"
+    symbol: "string"
+    direction: "LONG | SHORT | NONE"
+    entry_price: "number"
+    current_price: "number"
+    position_size: "number"
+    stop_loss: "number | null"
+    take_profit: "number | null"
+    unrealized_pnl: "number"
+    session_pnl: "number"
+    timestamp: "datetime"
+
+# ============================================================
+# DASHBOARD
+# ============================================================
+
+dashboard:
+
+  trader_state:
+
+    fields:
+      - current_state
+      - confidence
+      - current_pnl
+      - session_pnl
+      - trades_today
+      - consecutive_losses
+      - risk_level
+
+  behavioral_score:
+
+    range: "0-100"
+
+    categories:
+      discipline: 0
+      risk_control: 0
+      behavioral_stability: 0
+
+  event_timeline:
+
+    fields:
+      - timestamp
+      - event
+      - severity
+      - detected_behavior
+      - JARVIS_response
+
+  current_observation:
+
+    fields:
+      - platform
+      - symbol
+      - position
+      - direction
+      - entry
+      - current_price
+      - stop_loss
+      - take_profit
+      - unrealized_pnl
+
+  intervention_panel:
+
+    fields:
+      - why_JARVIS_intervened
+      - detected_pattern
+      - severity
+      - recommended_action
+
+# ============================================================
+# DATA MODELS
+# ============================================================
+
+models:
+
+  Trade:
+
+    fields:
+      id: "string"
+      symbol: "string"
+      direction: "string"
+      entry_price: "number"
+      exit_price: "number | null"
+      position_size: "number"
+      stop_loss: "number | null"
+      take_profit: "number | null"
+      pnl: "number"
+      opened_at: "datetime"
+      closed_at: "datetime | null"
+      result: "WIN | LOSS | OPEN"
+
+  BehavioralEvent:
+
+    fields:
+      timestamp: "datetime"
+      event_type: "string"
+      severity: "LOW | MEDIUM | HIGH"
+      detected_pattern: "string | null"
+      confidence: "number"
+
+  TraderState:
+
+    fields:
+      state: "STABLE | ELEVATED | IMPULSIVE | REVENGE_RISK"
+      confidence: "number"
+      session_pnl: "number"
+      trades_count: "number"
+      consecutive_losses: "number"
+      risk_score: "number"
+      discipline_score: "number"
+
+# ============================================================
+# WEBSOCKET
+# ============================================================
+
+websocket:
+
+  endpoint: "/ws"
+
+  frontend_to_backend:
+
+    - simulate_trade
+    - simulate_loss
+    - simulate_profit
+    - simulate_reentry
+    - simulate_position_change
+    - simulate_stop_loss_move
+    - reset_session
+
+  backend_to_frontend:
+
+    - trading_state_update
+    - behavioral_state_update
+    - jarvis_message
+    - jarvis_speaking
+    - intervention
+    - session_update
+
+# ============================================================
+# REST API
+# ============================================================
+
+api:
+
+  health:
+    method: "GET"
+    path: "/api/health"
+
+  session:
+    method: "GET"
+    path: "/api/session"
+
+  simulate_event:
+    method: "POST"
+    path: "/api/simulate/event"
+
+  reset_session:
+    method: "POST"
+    path: "/api/session/reset"
+
+# ============================================================
+# DEVELOPMENT PHASES
+# ============================================================
+
+development_steps:
+
+  step_1:
+    name: "Project Scaffold"
+
+    tasks:
+      - initialize React/Vite
+      - initialize FastAPI
+      - configure Tailwind
+      - create project structure
+      - configure environment variables
+      - establish frontend/backend connection
+
+  step_2:
+    name: "JARVIS Shell"
+
+    tasks:
+      - create floating JARVIS companion
+      - create assistant avatar
+      - create state animations
+      - create message area
+      - create voice controls
+      - create observation indicator
+
+  step_3:
+    name: "Trading Simulator"
+
+    tasks:
+      - create mock session
+      - create mock trades
+      - create P&L
+      - create simulated events
+      - create event timeline
+
+  step_4:
+    name: "Behavior Engine"
+
+    tasks:
+      - implement behavioral rules
+      - detect rapid re-entry
+      - detect increased position
+      - detect consecutive losses
+      - detect revenge-risk pattern
+      - calculate behavioral score
+
+  step_5:
+    name: "JARVIS Intervention"
+
+    tasks:
+      - generate contextual response
+      - display response
+      - speak response
+      - show intervention reason
+      - animate JARVIS during response
+
+  step_6:
+    name: "Prototype Polish"
+
+    tasks:
+      - animations
+      - transitions
+      - loading states
+      - error handling
+      - responsive layout
+      - README
+      - tests
+
+# ============================================================
+# TESTING
+# ============================================================
+
+testing:
+
+  backend:
+
+    tests:
+      - health_endpoint
+      - trade_creation
+      - trade_loss
+      - trade_profit
+      - rapid_reentry_detection
+      - position_size_detection
+      - consecutive_loss_detection
+      - revenge_risk_detection
+      - state_transition
+      - session_reset
+
+  frontend:
+
+    verify:
+      - dashboard_renders
+      - JARVIS_renders
+      - websocket_connects
+      - simulated_events_work
+      - behavioral_state_updates
+      - JARVIS_message_appears
+      - voice_response_works
+      - timeline_updates
+      - reset_works
+
+# ============================================================
+# DEVELOPER EXPERIENCE
+# ============================================================
+
+developer_experience:
+
+  requirements:
+    - simple_local_setup
+    - clean_architecture
+    - meaningful_errors
+    - modular_components
+    - environment_variables
+    - README
+    - no unnecessary_dependencies
+
+  README:
+
+    include:
+      - project_overview
+      - architecture
+      - setup
+      - frontend_commands
+      - backend_commands
+      - websocket_architecture
+      - behavioral_engine
+      - simulation_controls
+      - current_limitations
+      - future_roadmap
+
+# ============================================================
+# DEFINITION OF DONE
+# ============================================================
+
+definition_of_done:
+
+  required:
+
+    - React application launches
+    - FastAPI backend launches
+    - WebSocket connection works
+    - JARVIS UI works
+    - simulated trading session works
+    - simulated profit works
+    - simulated loss works
+    - rapid re-entry can be simulated
+    - position size increase can be simulated
+    - revenge trading pattern can be detected
+    - behavioral state changes correctly
+    - JARVIS generates contextual response
+    - JARVIS speaks response
+    - event timeline updates
+    - behavioral score updates
+    - session can be reset
+    - all trading data is clearly simulated
+    - no real broker integration exists
+    - no real order execution exists
+    - README is complete
+    - basic tests pass
+
+# ============================================================
+# MOST IMPORTANT ANTIGRAVITY INSTRUCTION
+# ============================================================
+
+final_instruction:
+
+  >
+  DO NOT BUILD THE ENTIRE LONG-TERM JARVIS PRODUCT IN THIS TASK.
+
+  Build Phase 1 only.
+
+  The goal is NOT to connect TradingView, Groww, Zerodha, MT5, or any broker.
+
+  The goal is to prove the EXPERIENCE.
+
+  The user should open the web application and feel:
+
+  "There is an intelligent AI companion sitting beside me while I trade."
+
+  The prototype must demonstrate:
+
+    trading event
+      ↓
+    JARVIS observes
+      ↓
+    behavioral analysis
+      ↓
+    pattern detected
+      ↓
+    JARVIS thinks
+      ↓
+    JARVIS speaks
+      ↓
+    trader receives intervention
+
+  Make the architecture modular so future versions can replace the mock
+  observation layer with browser screen capture, OCR, computer vision,
+  trading APIs, LLM reasoning, persistent trader memory, and real-time voice
+  without rewriting the entire application.
+
+  PRIORITIZE:
+
+    1. JARVIS experience
+    2. clean architecture
+    3. behavioral engine
+    4. voice interaction
+    5. visual quality
+    6. extensibility
+
+  DO NOT PRIORITIZE:
+
+    1. broker integrations
+    2. automated trading
+    3. advanced machine learning
+    4. production deployment
+    5. payments
+    6. unnecessary infrastructure
+
+  When Phase 1 is complete, STOP.
+
+  Then provide:
+
+    1. implementation summary
+    2. project structure
+    3. setup instructions
+    4. working features
+    5. mocked features
+    6. known limitations
+    7. recommended Phase 2
+
+  Do not automatically continue into Phase 2.
